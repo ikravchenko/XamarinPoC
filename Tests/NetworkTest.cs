@@ -7,9 +7,10 @@ namespace Tests
 	[TestFixture]
 	public class NetworkTest
 	{
-		[TestCase]
+		[Test]
 		public void TestDBAfterRequest() {
-			//new NetworkManager ().RequestAndSaveWeather ();
+			new NetworkManager ().RequestAndSaveWeather ();
+			Assert.AreEqual (16, TaskManager.GetTasks ().Count);
 		}
 	}
 }

@@ -40,9 +40,50 @@
   <ItemGroup>
     <Compile Include="NetworkTest.cs" />
     <Compile Include="BLETest.cs" />
+    <Compile Include="..\Tasky.Core\BusinessLayer\Task.cs">
+      <Link>Tasky.Core\BusinessLayer\Task.cs</Link>
+    </Compile>
+    <Compile Include="..\Tasky.Core\BusinessLayer\Contracts\BusinessEntityBase.cs">
+      <Link>Tasky.Core\BusinessLayer\Contracts\BusinessEntityBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Tasky.Core\BusinessLayer\Contracts\IBusinessEntity.cs">
+      <Link>Tasky.Core\BusinessLayer\Contracts\IBusinessEntity.cs</Link>
+    </Compile>
     <Compile Include="..\Tasky.Core\BusinessLayer\Managers\BluetoothAssistant.cs">
-      <Link>BluetoothAssistant.cs</Link>
+      <Link>Tasky.Core\BusinessLayer\Managers\BluetoothAssistant.cs</Link>
+    </Compile>
+    <Compile Include="..\Tasky.Core\BusinessLayer\Managers\NetworkManager.cs">
+      <Link>Tasky.Core\BusinessLayer\Managers\NetworkManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Tasky.Core\BusinessLayer\Managers\TaskManager.cs">
+      <Link>Tasky.Core\BusinessLayer\Managers\TaskManager.cs</Link>
+    </Compile>
+    <Compile Include="..\Tasky.Core\DataAccessLayer\TaskRepository.cs">
+      <Link>Tasky.Core\DataAccessLayer\TaskRepository.cs</Link>
+    </Compile>
+    <Compile Include="..\Tasky.Core\DataLayer\SQLite.cs">
+      <Link>Tasky.Core\DataLayer\SQLite.cs</Link>
+    </Compile>
+    <Compile Include="..\Tasky.Core\DataLayer\TaskDatabase.cs">
+      <Link>Tasky.Core\DataLayer\TaskDatabase.cs</Link>
     </Compile>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <ItemGroup>
+    <Folder Include="Tasky.Core\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Tasky.Core\BusinessLayer\About.txt">
+      <Link>Tasky.Core\BusinessLayer\About.txt</Link>
+    </None>
+    <None Include="..\Tasky.Core\BusinessLayer\Managers\.DS_Store">
+      <Link>Tasky.Core\BusinessLayer\Managers\.DS_Store</Link>
+    </None>
+    <None Include="..\Tasky.Core\DataAccessLayer\About.txt">
+      <Link>Tasky.Core\DataAccessLayer\About.txt</Link>
+    </None>
+    <None Include="..\Tasky.Core\DataLayer\About.txt">
+      <Link>Tasky.Core\DataLayer\About.txt</Link>
+    </None>
+  </ItemGroup>
 </Project>
