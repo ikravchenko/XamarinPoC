@@ -19,6 +19,7 @@ namespace BluetoothLEExplorer.Droid.Screens.Scanner.ServiceDetails
 	public class ServiceDetailsScreen : ListActivity
 	{
 		protected List<string> _characteristics;
+		private bool hrEnabled = false;
 
 		protected override void OnCreate (Bundle bundle)
 		{
@@ -36,11 +37,24 @@ namespace BluetoothLEExplorer.Droid.Screens.Scanner.ServiceDetails
 		{
 			if (item.ItemId == Resource.Id.menu_ble_read) {
 				foreach (var c in App.Current.State.SelectedService.Characteristics) {
-					BluetoothLEManager.Current.gatt.ReadCharacteristic(c);
+					BluetoothLEManager.Current.Gatt.ReadCharacteristic(c);
+					if (c.Uuid.Equals (UUID.FromString (BluetoothAssistant.HRS_SENSOR_UUID))) {
+						if (!hrEnabled) {
+							EnableHRNotification (c);
+							hrEnabled = true;
+						}
+					}
 				}
 				ListView.SetAdapter (new CharachteristicAdapter (this, App.Current.State.SelectedService.Characteristics));
 			}
 			return true;
+		}
+
+		private void EnableHRNotification(BluetoothGattCharacteristic c) {
+			BluetoothLEManager.Current.Gatt.SetCharacteristicNotification(c, true);
+			BluetoothGattDescriptor descriptor = c.GetDescriptor(UUID.FromString("00002902-0000-1000-8000-00805f9b34fb"));
+			descriptor.SetValue(new byte[]{0x01, 0x00});
+			BluetoothLEManager.Current.Gatt.WriteDescriptor(descriptor);
 		}
 
 		public class CharachteristicAdapter : GenericAdapterBase<BluetoothGattCharacteristic>

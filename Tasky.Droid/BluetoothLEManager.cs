@@ -18,7 +18,7 @@ namespace BluetoothLEExplorer.Droid
 		protected BluetoothManager _manager;
 		protected BluetoothAdapter _adapter;
 
-		public BluetoothGatt gatt {
+		public BluetoothGatt Gatt {
 			get;
 			set;
 		}
@@ -156,7 +156,7 @@ namespace BluetoothLEExplorer.Droid
 		// Q: how to return in same context (requires a callback)
 		public void ConnectToDevice (BluetoothDevice device)
 		{
-			this.gatt = device.ConnectGatt (Android.App.Application.Context, true, this._gattCallback);
+			this.Gatt = device.ConnectGatt (Android.App.Application.Context, true, this._gattCallback);
 		}
 
 		public void DisconnectDevice (BluetoothDevice device)

@@ -142,7 +142,7 @@ namespace BluetoothLEExplorer.iOS.UI.Screens.Scanner.ServiceDetails
 				if (characteristic.UUID.Equals (CBUUID.FromString(BluetoothAssistant.HRS_SENSOR_UUID))) {
 					cell.TextLabel.Text = "Heart Rate Charachteristic";
 					if (characteristic.Value != null) {
-						cell.DetailTextLabel.Text = "Has Value";
+						cell.DetailTextLabel.Text = "Value: " + DecodeHRValue(characteristic.Value);
 						return cell;
 					}
 				} else if (characteristic.UUID.Equals (CBUUID.FromString(BluetoothAssistant.HRS_SENSOR_LOCATION_UUID))) {
@@ -166,6 +166,19 @@ namespace BluetoothLEExplorer.iOS.UI.Screens.Scanner.ServiceDetails
 				}
 
 				return cell;
+			}
+
+			public static int DecodeHRValue (NSData value)
+			{
+				int bpmValue = 0;
+				if ((value[0] & 0x01) == 0) {
+					bpmValue = value[1];
+				}
+				else {
+					bpmValue = -1;
+					//bpmValue = CFSwapInt16LittleToHost(*(uint16_t *)(&value[1]));
+				}
+				return bpmValue;
 			}
 
 			public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
