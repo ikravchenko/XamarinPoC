@@ -1,0 +1,9 @@
+Tasky.iOS/obj/*
+Tasky.iOS/bin/*
+Tasky.iOS/bin
+Tasky.iOS/Screens/*
+Tasky.Droid/bin/*
+Tasky.Droid/obj/*
+Tests/bin/*
+Tasky.Core/bin/*
+Tasky.Core/obj/*

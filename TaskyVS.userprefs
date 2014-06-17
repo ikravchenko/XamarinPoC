@@ -1,0 +1,41 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Tests/NetworkTest.cs">
+    <Files>
+      <File FileName="Tasky.Droid/Screens/ServiceDetailsScreen.cs" Line="70" Column="5" />
+      <File FileName="Tasky.Droid/Adapters/GenericObjectAdapter.cs" Line="15" Column="2" />
+      <File FileName="Tasky.Droid/Screens/TaskDetailsScreen.cs" Line="19" Column="29" />
+      <File FileName="Tasky.Core/BusinessLayer/Managers/BluetoothAssistant.cs" Line="32" Column="19" />
+      <File FileName="Tasky.Droid/Resources/menu/menu_detailsscreen.xml" Line="1" Column="1" />
+      <File FileName="Tasky.Droid/Resources/menu/menu_ble_service.xml" Line="5" Column="40" />
+      <File FileName="Tasky.Droid/Screens/HomeScreen.cs" Line="57" Column="60" />
+      <File FileName="Tasky.iOS/Screens/ServiceDetailsScreen.cs" Line="21" Column="45" />
+      <File FileName="Tasky.iOS/Screens/DeviceDetailsScreen.cs" Line="90" Column="6" />
+      <File FileName="Tasky.Droid/Screens/DeviceDetailsScreen.cs" Line="62" Column="23" />
+      <File FileName="Tasky.Droid/Adapters/ServicesAdapter.cs" Line="28" Column="92" />
+      <File FileName="Tasky.Core.Tests/UnitTest1.cs" Line="1" Column="1" />
+      <File FileName="Tasky.Core.Tests/Properties/AssemblyInfo.cs" Line="1" Column="1" />
+      <File FileName="Tests/BLETest.cs" Line="19" Column="90" />
+      <File FileName="Tests/NetworkTest.cs" Line="12" Column="6" />
+    </Files>
+    <Pads>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State>
+          <Value>characteristic.GetValue()</Value>
+          <Value>bodySensorPositionValueArray[0]</Value>
+          <Value>value</Value>
+          <Value>bodySensorPositionValueArray</Value>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <DisabledProjects>
+    <String>Tasky.WinPhone/Tasky.WinPhone.csproj</String>
+    <String>Tasky.Core.Tests/Tasky.Core.Tests.csproj</String>
+  </DisabledProjects>
+  <MonoDevelop.Ide.ItemProperties.Tasky.Droid MonoForAntroid.PreferredDevice="3.7&quot; WVGA (Nexus One)" AndroidDeviceId-Debug="069655f9006b7a33" />
+</Properties>
