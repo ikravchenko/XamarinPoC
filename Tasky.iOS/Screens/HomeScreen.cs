@@ -5,6 +5,7 @@ using MonoTouch.UIKit;
 using MonoTouch.Dialog;
 using Tasky.AL;
 using Tasky.BL;
+using Tasky.BL.Managers;
 
 using System.Xml.Linq;
 using BluetoothLEExplorer.iOS.UI.Screens.Scanner.Home;
@@ -12,7 +13,11 @@ using BluetoothLEExplorer.iOS.UI.Screens.Scanner.Home;
 namespace Tasky.Screens.iPhone {
 	public class HomeScreen : DialogViewController {
 		List<Task> tasks;
-		public event EventHandler NetworkDataLoaded = delegate {};
+		NetworkManager NetworkManager;
+		LocalizableBindingContext context;
+		TaskDialog taskDialog;
+		Task currentTask;
+		DialogViewController detailsScreen;
 		
 		public HomeScreen () : base (UITableViewStyle.Plain, null)
 		{
@@ -21,30 +26,23 @@ namespace Tasky.Screens.iPhone {
 		
 		protected void Initialize()
 		{
+			NetworkManager = new NetworkManager ();
+			NetworkManager.NetworkDataLoaded += (object sender, EventArgs e) => {
+				PopulateTable ();
+			};
 			NavigationItem.SetRightBarButtonItem (new UIBarButtonItem (UIBarButtonSystemItem.Add), false);
 			NavigationItem.RightBarButtonItem.Clicked += (sender, e) => { ShowTaskDetails(new Task()); };
 			NavigationItem.SetLeftBarButtonItem (new UIBarButtonItem (UIBarButtonSystemItem.Refresh), false);
 			NavigationItem.LeftBarButtonItem.Clicked += (sender, e) => { 
-				InvokeInBackground (delegate {
-					BL.Managers.TaskManager.DeleteAllTasks ();
-					new BL.Managers.NetworkManager().RequestAndSaveWeather();
-					NetworkDataLoaded.Invoke (this, new EventArgs ());
-				});
-
-			};
-
-			NetworkDataLoaded += (object sender, EventArgs e) => {
-				BeginInvokeOnMainThread ( delegate {
-						PopulateTable ();
-					}
-				);
+				RequestData();
 			};
 		}
 
-		LocalizableBindingContext context;
-		TaskDialog taskDialog;
-		Task currentTask;
-		DialogViewController detailsScreen;
+		public async void RequestData() {
+			var nr = NetworkManager.RequestAndSaveWeather ();
+			await nr;
+		}
+			
 		protected void ShowTaskDetails (Task task)
 		{
 			currentTask = task;
@@ -68,14 +66,14 @@ namespace Tasky.Screens.iPhone {
 			currentTask.Name = taskDialog.Name;
 			currentTask.Notes = taskDialog.Notes;
 			currentTask.Done = taskDialog.Done;
-			BL.Managers.TaskManager.SaveTask(currentTask);
+			TaskManager.SaveTask(currentTask);
 			NavigationController.PopViewControllerAnimated (true);
 		//	context.Dispose (); // documentation suggests this is required, but appears to cause a crash sometimes
 		}
 		public void DeleteTask ()
 		{
 			if (currentTask.ID >= 0)
-			BL.Managers.TaskManager.DeleteTask (currentTask.ID);
+			TaskManager.DeleteTask (currentTask.ID);
 			NavigationController.PopViewControllerAnimated (true);
 		}
 
@@ -88,7 +86,7 @@ namespace Tasky.Screens.iPhone {
 		
 		protected void PopulateTable ()
 		{
-			tasks = BL.Managers.TaskManager.GetTasks ().ToList ();
+			tasks = TaskManager.GetTasks ().ToList ();
 			var newTaskDefaultName = MonoTouch.Foundation.NSBundle.MainBundle.LocalizedString ("<new task>", "<new task>");
 			// make into a list of MT.D elements to display
 			List<Element> le = new List<Element>();
@@ -101,18 +99,21 @@ namespace Tasky.Screens.iPhone {
 			// add as root
 			Root = new RootElement ("Tasky") { s }; 
 		}
+
 		public override void Selected (MonoTouch.Foundation.NSIndexPath indexPath)
 		{
 			var task = tasks[indexPath.Row];
 			ShowTaskDetails(task);
 		}
+
 		public override Source CreateSizingSource (bool unevenRows)
 		{
 			return new EditingSource (this);
 		}
+
 		public void DeleteTaskRow(int rowId)
 		{
-			BL.Managers.TaskManager.DeleteTask(tasks[rowId].ID);
+			TaskManager.DeleteTask(tasks[rowId].ID);
 		}
 	}
 }

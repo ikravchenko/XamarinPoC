@@ -7,6 +7,7 @@ using Tasky.BL;
 using Android.Views;
 using System.Threading.Tasks;
 using BluetoothLEExplorer.Droid.Screens.Scanner.Home;
+using Tasky.BL.Managers;
 
 namespace Tasky.Droid.Screens {
     [Activity (Label = "Tasky Pro", MainLauncher = true)]			
@@ -14,11 +15,18 @@ namespace Tasky.Droid.Screens {
 		protected Adapters.TaskListAdapter taskList;
 		protected IList<Tasky.BL.Task> tasks;
 		protected ListView taskListView = null;
+		private NetworkManager networkManager;
+
 		
 		protected override void OnCreate (Bundle bundle)
 		{
 			base.OnCreate (bundle);
-
+			networkManager = new NetworkManager ();
+			networkManager.NetworkDataLoaded += (object sender, System.EventArgs e) => {
+				tasks = TaskManager.GetTasks();
+				taskList = new Adapters.TaskListAdapter(this, tasks);
+				taskListView.Adapter = taskList;
+			};
             // Enable the ActionBar
             RequestWindowFeature(WindowFeatures.ActionBar);
 
@@ -66,20 +74,8 @@ namespace Tasky.Droid.Screens {
                     StartActivity(typeof(TaskDetailsScreen));
                     return true;
 			case Resource.Id.menu_refresh:
-
-				System.Threading.Tasks.Task.Factory.StartNew (
-					// tasks allow you to use the lambda syntax to pass work
-					() => { 
-						BL.Managers.TaskManager.DeleteAllTasks();
-						new BL.Managers.NetworkManager ().RequestAndSaveWeather ();
-						RunOnUiThread(delegate {
-							tasks = Tasky.BL.Managers.TaskManager.GetTasks();
-							taskList = new Adapters.TaskListAdapter(this, tasks);
-							taskListView.Adapter = taskList;
-						});
-					}
-				);
-					return true;
+				RequestData();
+				return true;
 			case Resource.Id.menu_ble:
 				StartActivity(typeof(ScannerHome));
 				return true;
@@ -88,5 +84,10 @@ namespace Tasky.Droid.Screens {
             }
 
         }
+
+		public async void RequestData() {
+			var nr = networkManager.RequestAndSaveWeather ();
+			await nr;
+		}
 	}
 }
