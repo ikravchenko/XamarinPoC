@@ -13,22 +13,13 @@ namespace BluetoothLEExplorer.Droid
 		public event EventHandler<DeviceConnectionEventArgs> DeviceConnected = delegate {};
 		public event EventHandler<DeviceConnectionEventArgs> DeviceDisconnected = delegate {};
 		public event EventHandler<ServiceDiscoveredEventArgs> ServiceDiscovered = delegate {};
-		public event EventHandler<CharachteristicChangedEventArgs> CharachteristicChanged = delegate {};
+		public event EventHandler CharachteristicChanged = delegate {};
 
 
 		protected BluetoothManager _manager;
 		protected BluetoothAdapter _adapter;
-
-		public BluetoothGatt Gatt {
-			get;
-			set;
-		}
 		protected GattCallback _gattCallback;
 
-		/// <summary>
-		/// Whether or not we're currently scanning for peripheral devices
-		/// </summary>
-		/// <value><c>true</c> if this instance is scanning; otherwise, <c>false</c>.</value>
 		public bool IsScanning
 		{
 			get { return this._isScanning; }
@@ -38,43 +29,21 @@ namespace BluetoothLEExplorer.Droid
 		public bool IsEnabled() {
 			return _adapter.IsEnabled;
 		}
-
-				/// <summary>
-		/// Gets the discovered peripherals.
-		/// </summary>
-		/// <value>The discovered peripherals.</value>
+			
 		public List<BluetoothDevice> DiscoveredDevices
 		{
 			get { return this._discoveredDevices; }
-		}
-		List<BluetoothDevice> _discoveredDevices = new List<BluetoothDevice>();
-
-		/// <summary>
-		/// Gets the connected peripherals.
-		/// TODO: in the xplat API, make sure to combine the GATT into a single 
-		/// IDevice object so it isn't necessary to create a dictionary to track them.
-		/// </summary>
-		/// <value>The discovered peripherals.</value>
+		} List<BluetoothDevice> _discoveredDevices = new List<BluetoothDevice>();
+			
 		public Dictionary<BluetoothDevice, BluetoothGatt> ConnectedDevices
 		{
 			get { return this._connectedDevices; }
 		} protected Dictionary<BluetoothDevice, BluetoothGatt> _connectedDevices = new Dictionary<BluetoothDevice, BluetoothGatt>();
-
-		/// <summary>
-		/// Gets the services.
-		/// </summary>
-		/// <value>The services.</value>
+			
 		public Dictionary<BluetoothDevice, IList<BluetoothGattService>> Services
 		{
 			get { return this._services; }
 		} protected Dictionary<BluetoothDevice, IList<BluetoothGattService>> _services = new Dictionary<BluetoothDevice, IList<BluetoothGattService>>();
-
-//		/// <summary>
-//		/// Need to have this because the google BLE API is terrible. in it, we cache the device's
-//		/// GATT when we call Connect, so that later, we can add it to _connectedDevices, because
-//		/// we're not given a reference to the device when it connects
-//		/// </summary>
-//		protected Dictionary<BluetoothDevice, BluetoothGatt> _connectingDevices = new Dictionary<BluetoothDevice, BluetoothGatt>();
 
 		public static BluetoothLEManager Current
 		{
@@ -99,22 +68,43 @@ namespace BluetoothLEExplorer.Droid
 		public async Task BeginScanningForDevices()
 		{
 			Console.WriteLine ("BluetoothLEManager: Starting a scan for devices.");
-
-			// clear out the list
-			this._discoveredDevices = new List<BluetoothDevice> ();
-
-			// start scanning
+			this._discoveredDevices.Clear ();
 			this._isScanning = true;
 			_adapter.StartLeScan(this);
-
 			// in 10 seconds, stop the scan
 			await Task.Delay (10000);
-
 			// if we're still scanning
 			if (this._isScanning) {
 				Console.WriteLine ("BluetoothLEManager: Scan timeout has elapsed.");
 				this._adapter.StopLeScan (this);
 				this.ScanTimeoutElapsed (this, new EventArgs ());
+			}
+		}
+
+		public void ReadCharacteristic(BluetoothDevice device, BluetoothGattCharacteristic c) {
+			if (device == null || c == null) {
+				return;
+			}
+			if (_connectedDevices.ContainsKey(device)) {
+				_connectedDevices [device].ReadCharacteristic (c);
+			}
+		}
+
+		public void SetCharacteristicNotification(BluetoothDevice device, BluetoothGattCharacteristic c, bool notify) {
+			if (device == null || c == null) {
+				return;
+			}
+			if (_connectedDevices.ContainsKey(device)) {
+				_connectedDevices [device].SetCharacteristicNotification (c, notify);
+			}
+		}
+
+		public void WriteDescriptor(BluetoothDevice device, BluetoothGattDescriptor d) {
+			if (device == null || d == null) {
+				return;
+			}
+			if (_connectedDevices.ContainsKey(device)) {
+				_connectedDevices [device].WriteDescriptor (d);
 			}
 		}
 
@@ -153,11 +143,9 @@ namespace BluetoothLEExplorer.Droid
 			return false;
 		}
 
-		//TODO: this really should be async. in the xplat API, make sure to asyncify
-		// Q: how to return in same context (requires a callback)
 		public void ConnectToDevice (BluetoothDevice device)
 		{
-			this.Gatt = device.ConnectGatt (Android.App.Application.Context, true, this._gattCallback);
+			device.ConnectGatt (Android.App.Application.Context, true, this._gattCallback);
 		}
 
 		public void DisconnectDevice (BluetoothDevice device)
@@ -208,15 +196,6 @@ namespace BluetoothLEExplorer.Droid
 			public BluetoothGatt Gatt;
 
 			public ServiceDiscoveredEventArgs() : base ()
-			{}
-		}
-
-		public class CharachteristicChangedEventArgs : EventArgs
-		{
-			public BluetoothGatt Gatt;
-			public BluetoothGattCharacteristic Characteristic;
-
-			public CharachteristicChangedEventArgs() : base ()
 			{}
 		}
 
@@ -284,10 +263,7 @@ namespace BluetoothLEExplorer.Droid
 			public override void OnCharacteristicChanged (BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
 			{
 				base.OnCharacteristicChanged (gatt, characteristic);
-				this._parent.CharachteristicChanged (this, new CharachteristicChangedEventArgs () {
-					Gatt = gatt,
-					Characteristic = characteristic
-				});
+				this._parent.CharachteristicChanged (this, new EventArgs ());
 			}
 
 		}

@@ -37,7 +37,7 @@ namespace BluetoothLEExplorer.Droid.Screens.Scanner.ServiceDetails
 		{
 			if (item.ItemId == Resource.Id.menu_ble_read) {
 				foreach (var c in App.Current.State.SelectedService.Characteristics) {
-					BluetoothLEManager.Current.Gatt.ReadCharacteristic(c);
+					BluetoothLEManager.Current.ReadCharacteristic (App.Current.State.SelectedDevice, c);
 					if (c.Uuid.Equals (UUID.FromString (BluetoothAssistant.HRS_SENSOR_UUID))) {
 						if (!hrEnabled) {
 							EnableHRNotification (c);
@@ -50,10 +50,10 @@ namespace BluetoothLEExplorer.Droid.Screens.Scanner.ServiceDetails
 		}
 
 		private void EnableHRNotification(BluetoothGattCharacteristic c) {
-			BluetoothLEManager.Current.Gatt.SetCharacteristicNotification(c, true);
+			BluetoothLEManager.Current.SetCharacteristicNotification(App.Current.State.SelectedDevice, c, true);
 			BluetoothGattDescriptor descriptor = c.GetDescriptor(UUID.FromString("00002902-0000-1000-8000-00805f9b34fb"));
 			descriptor.SetValue(new byte[]{0x01, 0x00});
-			BluetoothLEManager.Current.Gatt.WriteDescriptor(descriptor);
+			BluetoothLEManager.Current.WriteDescriptor(App.Current.State.SelectedDevice, descriptor);
 		}
 
 		protected override void OnResume ()
@@ -64,7 +64,7 @@ namespace BluetoothLEExplorer.Droid.Screens.Scanner.ServiceDetails
 
 		private void ReloadData(object sender, EventArgs args) {
 			RunOnUiThread (delegate {
-				ListView.SetAdapter (new CharachteristicAdapter (this, App.Current.State.SelectedService.Characteristics));
+				((CharachteristicAdapter)ListView.Adapter).NotifyDataSetChanged();
 			});
 		}
 
