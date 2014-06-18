@@ -45,7 +45,6 @@ namespace BluetoothLEExplorer.Droid.Screens.Scanner.ServiceDetails
 						}
 					}
 				}
-				ListView.SetAdapter (new CharachteristicAdapter (this, App.Current.State.SelectedService.Characteristics));
 			}
 			return true;
 		}
@@ -55,6 +54,24 @@ namespace BluetoothLEExplorer.Droid.Screens.Scanner.ServiceDetails
 			BluetoothGattDescriptor descriptor = c.GetDescriptor(UUID.FromString("00002902-0000-1000-8000-00805f9b34fb"));
 			descriptor.SetValue(new byte[]{0x01, 0x00});
 			BluetoothLEManager.Current.Gatt.WriteDescriptor(descriptor);
+		}
+
+		protected override void OnResume ()
+		{
+			base.OnResume ();
+			BluetoothLEManager.Current.CharachteristicChanged += ReloadData;
+		}
+
+		private void ReloadData(object sender, EventArgs args) {
+			RunOnUiThread (delegate {
+				ListView.SetAdapter (new CharachteristicAdapter (this, App.Current.State.SelectedService.Characteristics));
+			});
+		}
+
+		protected override void OnPause ()
+		{
+			BluetoothLEManager.Current.CharachteristicChanged -= ReloadData;
+			base.OnPause ();
 		}
 
 		public class CharachteristicAdapter : GenericAdapterBase<BluetoothGattCharacteristic>

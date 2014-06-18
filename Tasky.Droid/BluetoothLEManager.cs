@@ -13,6 +13,7 @@ namespace BluetoothLEExplorer.Droid
 		public event EventHandler<DeviceConnectionEventArgs> DeviceConnected = delegate {};
 		public event EventHandler<DeviceConnectionEventArgs> DeviceDisconnected = delegate {};
 		public event EventHandler<ServiceDiscoveredEventArgs> ServiceDiscovered = delegate {};
+		public event EventHandler<CharachteristicChangedEventArgs> CharachteristicChanged = delegate {};
 
 
 		protected BluetoothManager _manager;
@@ -210,6 +211,15 @@ namespace BluetoothLEExplorer.Droid
 			{}
 		}
 
+		public class CharachteristicChangedEventArgs : EventArgs
+		{
+			public BluetoothGatt Gatt;
+			public BluetoothGattCharacteristic Characteristic;
+
+			public CharachteristicChangedEventArgs() : base ()
+			{}
+		}
+
 		protected class GattCallback : BluetoothGattCallback
 		{
 			protected BluetoothLEManager _parent;
@@ -268,6 +278,15 @@ namespace BluetoothLEExplorer.Droid
 
 				this._parent.ServiceDiscovered (this, new ServiceDiscoveredEventArgs () {
 					Gatt = gatt
+				});
+			}
+
+			public override void OnCharacteristicChanged (BluetoothGatt gatt, BluetoothGattCharacteristic characteristic)
+			{
+				base.OnCharacteristicChanged (gatt, characteristic);
+				this._parent.CharachteristicChanged (this, new CharachteristicChangedEventArgs () {
+					Gatt = gatt,
+					Characteristic = characteristic
 				});
 			}
 
