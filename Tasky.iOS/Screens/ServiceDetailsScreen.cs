@@ -34,9 +34,6 @@ namespace BluetoothLEExplorer.iOS.UI.Screens.Scanner.ServiceDetails
 
 			// when the characteristic is selected in the table, make a request to disover the descriptors for it.
 			this.tableSource.CharacteristicSelected += (object sender, CharacteristicTableSource.CharacteristicSelectedEventArgs e) => {
-				if (e.Characteristic.UUID.Equals (CBUUID.FromString(BluetoothAssistant.HRS_SENSOR_UUID))) {
-					_connectedPeripheral.SetNotifyValue(true, e.Characteristic);
-				}
 				this._connectedPeripheral.DiscoverDescriptors(e.Characteristic);
 			};
 		}
@@ -46,7 +43,6 @@ namespace BluetoothLEExplorer.iOS.UI.Screens.Scanner.ServiceDetails
 			base.ViewDidLoad ();
 
 			this.characteristicsTable.Source = this.tableSource;
-
 		}
 
 		public void SetPeripheralAndService (CBPeripheral peripheral, CBService service)
@@ -68,6 +64,12 @@ namespace BluetoothLEExplorer.iOS.UI.Screens.Scanner.ServiceDetails
 							Console.WriteLine("Characteristic: " + characteristic.Description);
 							_connectedPeripheral.ReadValue(characteristic);
 							this._characteristics.Add (characteristic);
+							if (characteristic.UUID.Equals (CBUUID.FromString (BluetoothAssistant.HRS_SENSOR_UUID))) {
+								_connectedPeripheral.SetNotifyValue (true, characteristic);
+								_connectedPeripheral.UpdatedCharacterteristicValue += (object sender1, CBCharacteristicEventArgs e1) => {
+									this.characteristicsTable.ReloadData();	
+								};
+							}
 							this.characteristicsTable.ReloadData();
 						}
 					}
