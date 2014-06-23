@@ -44,6 +44,7 @@ namespace Tasky {
 
 		[Section ("")]
 		[OnTap ("GoToScan")]
+		[Alignment (UITextAlignment.Center)]
 		public string GoToScan;
 	}
 }
