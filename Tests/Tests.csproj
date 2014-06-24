@@ -52,9 +52,6 @@
     <Compile Include="..\Tasky.Core\BusinessLayer\Managers\BluetoothAssistant.cs">
       <Link>Tasky.Core\BusinessLayer\Managers\BluetoothAssistant.cs</Link>
     </Compile>
-    <Compile Include="..\Tasky.Core\BusinessLayer\Managers\NetworkManager.cs">
-      <Link>Tasky.Core\BusinessLayer\Managers\NetworkManager.cs</Link>
-    </Compile>
     <Compile Include="..\Tasky.Core\BusinessLayer\Managers\TaskManager.cs">
       <Link>Tasky.Core\BusinessLayer\Managers\TaskManager.cs</Link>
     </Compile>
@@ -67,6 +64,7 @@
     <Compile Include="..\Tasky.Core\DataLayer\TaskDatabase.cs">
       <Link>Tasky.Core\DataLayer\TaskDatabase.cs</Link>
     </Compile>
+    <Compile Include="NativeTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

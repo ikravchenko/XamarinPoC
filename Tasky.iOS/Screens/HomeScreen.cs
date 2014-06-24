@@ -18,6 +18,7 @@ namespace Tasky.Screens.iPhone {
 		TaskDialog taskDialog;
 		Task currentTask;
 		DialogViewController detailsScreen;
+
 		
 		public HomeScreen () : base (UITableViewStyle.Plain, null)
 		{
@@ -93,10 +94,8 @@ namespace Tasky.Screens.iPhone {
 			foreach (var t in tasks) {
 				le.Add (new CheckboxElement((t.Name == "" ? newTaskDefaultName:t.Name + " " + t.Notes ), t.Done));
 			}
-			// add to section
 			var s = new Section ();
 			s.AddAll (le);
-			// add as root
 			Root = new RootElement ("Tasky") { s }; 
 		}
 

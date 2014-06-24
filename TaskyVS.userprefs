@@ -1,11 +1,46 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Tasky.Droid/BluetoothLEManager.cs">
+  <MonoDevelop.Ide.Workbench>
     <Files>
-      <File FileName="Tasky.Droid/Screens/ServiceDetailsScreen.cs" Line="7" Column="19" />
-      <File FileName="Tasky.iOS/Screens/ServiceDetailsScreen.cs" Line="80" Column="68" />
-      <File FileName="Tasky.Droid/BluetoothLEManager.cs" Line="7" Column="36" />
+      <File FileName="Tasky.Droid/Screens/ServiceDetailsScreen.cs" Line="1" Column="1" />
+      <File FileName="Tasky.iOS/Screens/ServiceDetailsScreen.cs" Line="1" Column="1" />
+      <File FileName="Tasky.iOS/Screens/ScanButton.cs" Line="1" Column="1" />
+      <File FileName="Tasky.iOS/Screens/ScannerHome.cs" Line="1" Column="1" />
+      <File FileName="Tasky.Core/BusinessLayer/Managers/NetworkManager.cs" Line="6" Column="16" />
+      <File FileName="Tasky.iOS/ApplicationLayer/LocalizableBindingContext.cs" Line="1" Column="1" />
+      <File FileName="Tasky.iOS/ApplicationLayer/EditingSource.cs" Line="1" Column="1" />
+      <File FileName="Tests/NetworkTest.cs" Line="21" Column="9" />
+      <File FileName="Tests/BLETest.cs" Line="1" Column="1" />
+      <File FileName="Tests/NativeTest.cs" Line="13" Column="12" />
+      <File FileName="Tasky.Core/DataLayer/SQLite.cs" Line="1655" Column="22" />
+      <File FileName="NativeUtil/MathFuncs.h" Line="6" Column="1" />
+      <File FileName="NativeUtil/MathFuncs.cpp" Line="1" Column="20" />
+      <File FileName="Tasky.Core/Properties/AssemblyInfo.cs" Line="1" Column="1" />
     </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State expanded="True">
+          <Node name="NativeUtil" expanded="True" />
+          <Node name="Tasky.Core" expanded="True">
+            <Node name="References" expanded="True" />
+            <Node name="BusinessLayer" expanded="True" selected="True">
+              <Node name="Managers" expanded="True" />
+            </Node>
+            <Node name="DataAccessLayer" expanded="True" />
+            <Node name="DataLayer" expanded="True" />
+            <Node name="Properties" expanded="True" />
+          </Node>
+          <Node name="Tests" expanded="True">
+            <Node name="References" expanded="True" />
+            <Node name="Tasky.Core" expanded="True">
+              <Node name="BusinessLayer" expanded="True">
+                <Node name="Managers" expanded="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
     <BreakpointStore />

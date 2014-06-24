@@ -18,9 +18,9 @@ namespace Tests
 			Assert.AreEqual (16, TaskManager.GetTasks ().Count);
 		}
 
-		public async void RequestData() {
-			var nr = new NetworkManager().RequestAndSaveWeather ();
-			await nr;
+		public void RequestData() {
+//			var nr = new NetworkManager().RequestAndSaveWeather ();
+//			await nr;
 		}
 	}
 }

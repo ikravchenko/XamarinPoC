@@ -4,7 +4,8 @@ using System.IO;
 using System.Xml.Linq;
 using System.Collections.Generic;
 using Tasky.BL;
-//using System.Threading.Tasks;
+using System.Xml.Serialization;
+//using System.Xml.Schema;
 
 namespace Tasky.BL.Managers
 {
@@ -29,20 +30,68 @@ namespace Tasky.BL.Managers
 			dataStream.Close ();
 			response.Close ();
 
-			XElement xelement = XElement.Parse (responseFromServer);
-			var data = xelement.Element ("forecast");
-			IEnumerable<XElement> forecasts = data.Elements ();
-			foreach (var item in forecasts) {
-				var newTask = new Task ();
-				newTask.Name = item.Element ("symbol").Attribute ("name").Value.ToString ();
-				float temperature = float.Parse (item.Element ("temperature").Attribute ("value").Value, System.Globalization.CultureInfo.InvariantCulture);
-				newTask.Notes = temperature.ToString ();
-				newTask.Done = temperature > 15;
-				TaskManager.SaveTask (newTask);
+			//var doc = XDocument.Parse (responseFromServer);
+			XmlSerializer serializer = new XmlSerializer(typeof(WeatherData));
+			WeatherData weather;
+			using (StringReader xreader = new StringReader (responseFromServer)) {
+				weather = (WeatherData)(serializer.Deserialize (xreader));
+				if (weather != null && weather.Forecast != null && weather.Forecast.Entries != null) {
+					foreach (TimeEntry t in weather.Forecast.Entries) {
+						TaskManager.SaveTask (new Task () { 
+							Name = "From " + t.StartTime.ToShortTimeString () + " to " + t.EndTime.ToShortTimeString (),
+							Notes = t.Symbol.Name + ", temperature is " + t.Temperature.Value.ToString (),
+							Done = t.Temperature.Value > 15
+						});
+					}
+				}
 			}
 			NetworkDataLoaded.Invoke (this, new EventArgs ());
 			return "finished";
 		}
+	}
+	[XmlRoot(ElementName="weatherdata")]
+	public class WeatherData
+	{
+		[XmlElement(ElementName="forecast")]
+		public Forecast Forecast { get; set;}
+
+	}
+
+	[XmlRoot(ElementName="forecast")]
+	public class Forecast
+	{
+		[XmlElement(ElementName = "time")]
+		public List<TimeEntry> Entries { get; set;}
+
+		public Forecast()
+		{
+			Entries = new List<TimeEntry>();
+		}
+	}
+
+	[XmlRoot(ElementName="time")]
+	public class TimeEntry
+	{
+		[XmlAttribute(AttributeName="from")]
+		public DateTime StartTime { get; set;}
+		[XmlAttribute(AttributeName="to")]
+		public DateTime EndTime {get; set;}
+		[XmlElement(ElementName="symbol")]
+		public Symbol Symbol { get; set;}
+		[XmlElement(ElementName="temperature")]
+		public Temperature Temperature { get; set;}
+	}
+
+	[XmlRoot(ElementName="symbol")]
+	public class Symbol {
+		[XmlAttribute(AttributeName="name")]
+		public String Name;
+	}
+
+	[XmlRoot(ElementName="temperature")]
+	public class Temperature {
+		[XmlAttribute(AttributeName="value")]
+		public float Value;
 	}
 }
 
