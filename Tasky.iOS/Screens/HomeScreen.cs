@@ -80,6 +80,7 @@ namespace Tasky.Screens.iPhone {
 			var title = MonoTouch.Foundation.NSBundle.MainBundle.LocalizedString ("Task Details", "Task Details");
 			context = new LocalizableBindingContext (this, taskDialog, title);
 			detailsScreen = new DialogViewController (context.Root, true);
+			this.MarkDirty ();
 			this.NavigationController.PushViewController(detailsScreen, true);
 		}
 
