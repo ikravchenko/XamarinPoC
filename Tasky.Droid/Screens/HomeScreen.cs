@@ -10,7 +10,7 @@ using BluetoothLEExplorer.Droid.Screens.Scanner.Home;
 using Tasky.BL.Managers;
 
 namespace Tasky.Droid.Screens {
-    [Activity (Label = "Tasky Pro", MainLauncher = true)]			
+	[Activity (Label = "Weather", MainLauncher = true)]			
 	public class HomeScreen : Activity {
 		protected Adapters.TaskListAdapter taskList;
 		protected IList<Tasky.BL.Task> tasks;

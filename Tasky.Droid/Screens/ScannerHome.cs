@@ -16,7 +16,7 @@ using Tasky.Droid;
 
 namespace BluetoothLEExplorer.Droid.Screens.Scanner.Home
 {
-	[Activity (Label = "ScannerHome")]			
+	[Activity (Label = "Scanner")]			
 	public class ScannerHome : Activity
 	{
 		public const int BLE_ACTIVATION_CODE = 2;
@@ -39,6 +39,9 @@ namespace BluetoothLEExplorer.Droid.Screens.Scanner.Home
 
 			this.listAdapter = new DevicesAdapter(this, BluetoothLEManager.Current.DiscoveredDevices);
 			this.listView.Adapter = this.listAdapter;
+
+			ActionBar.SetDisplayHomeAsUpEnabled(true);
+			ActionBar.SetHomeButtonEnabled(true);
 		}
 		
 		protected override void OnResume ()
@@ -144,6 +147,12 @@ namespace BluetoothLEExplorer.Droid.Screens.Scanner.Home
 					this.scanButton.SetState (ScanButton.ScanButtonState.Normal);
 				}
 			}).Start();
+		}
+
+		public override bool OnOptionsItemSelected(IMenuItem item)
+		{
+			Finish ();
+			return base.OnOptionsItemSelected (item);
 		}
 	}
 }

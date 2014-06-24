@@ -31,6 +31,9 @@ namespace BluetoothLEExplorer.Droid.Screens.Scanner.DeviceDetails
 			this.ListAdapter = new ServicesAdapter (this, this.services);
 
 			BluetoothLEManager.Current.ConnectedDevices [App.Current.State.SelectedDevice].DiscoverServices ();
+
+			ActionBar.SetDisplayHomeAsUpEnabled (true);
+			ActionBar.SetHomeButtonEnabled (true);
 		}
 
 		protected override void OnResume ()
@@ -85,6 +88,12 @@ namespace BluetoothLEExplorer.Droid.Screens.Scanner.DeviceDetails
 			// disconnect from device
 			if (App.Current.State.SelectedDevice != null)
 				BluetoothLEManager.Current.DisconnectDevice (App.Current.State.SelectedDevice);
+		}
+
+		public override bool OnOptionsItemSelected(IMenuItem item)
+		{
+			Finish ();
+			return base.OnOptionsItemSelected (item);
 		}
 
 	}

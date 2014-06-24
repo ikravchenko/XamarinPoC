@@ -25,6 +25,8 @@ namespace BluetoothLEExplorer.Droid.Screens.Scanner.ServiceDetails
 		{
 			base.OnCreate (bundle);
 			this.ListAdapter = new CharachteristicAdapter (this, App.Current.State.SelectedService.Characteristics);
+			ActionBar.SetDisplayHomeAsUpEnabled (true);
+			ActionBar.SetHomeButtonEnabled (true);
 		}
 
 		public override bool OnCreateOptionsMenu (IMenu menu)
@@ -45,6 +47,8 @@ namespace BluetoothLEExplorer.Droid.Screens.Scanner.ServiceDetails
 						}
 					}
 				}
+			} else {
+				Finish ();
 			}
 			return true;
 		}
