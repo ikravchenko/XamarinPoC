@@ -6,23 +6,31 @@ using MonoTouch.Dialog;
 using Tasky.AL;
 using Tasky.BL;
 using Tasky.BL.Managers;
+using MonoTouch.Foundation;
+using MonoTouch.UIKit;
 
 using System.Xml.Linq;
 using BluetoothLEExplorer.iOS.UI.Screens.Scanner.Home;
 
 namespace Tasky.Screens.iPhone {
-	public class HomeScreen : DialogViewController {
-		List<Task> tasks;
+	[Register ("HomeScreen")]
+	public partial class HomeScreen : UITableViewController {
+		List<Task> Tasks;
 		NetworkManager NetworkManager;
 		LocalizableBindingContext context;
 		TaskDialog taskDialog;
 		Task currentTask;
 		DialogViewController detailsScreen;
+		WeatherDataSource TableSource;
 
-		
-		public HomeScreen () : base (UITableViewStyle.Plain, null)
+		public HomeScreen (IntPtr handle) : base (handle) 
 		{
-			Initialize ();
+			this.Initialize ();
+		}
+
+		public HomeScreen ()
+		{
+			this.Initialize ();
 		}
 		
 		protected void Initialize()
@@ -31,17 +39,37 @@ namespace Tasky.Screens.iPhone {
 			NetworkManager.NetworkDataLoaded += (object sender, EventArgs e) => {
 				PopulateTable ();
 			};
+			NavigationItem.Title = "Weather";
 			NavigationItem.SetRightBarButtonItem (new UIBarButtonItem (UIBarButtonSystemItem.Add), false);
 			NavigationItem.RightBarButtonItem.Clicked += (sender, e) => { ShowTaskDetails(new Task()); };
 			NavigationItem.SetLeftBarButtonItem (new UIBarButtonItem (UIBarButtonSystemItem.Refresh), false);
 			NavigationItem.LeftBarButtonItem.Clicked += (sender, e) => { 
 				RequestData();
 			};
+			TableSource = new WeatherDataSource ();
 		}
 
 		public async void RequestData() {
 			var nr = NetworkManager.RequestAndSaveWeather ();
 			await nr;
+		}
+
+		public override void LoadView() {
+			base.LoadView ();
+			this.TableView.DataSource = TableSource;
+
+			this.TableView.Delegate = new WeatherTableDelegate() {
+				Home = this
+			};
+		}
+
+		public class WeatherTableDelegate : UITableViewDelegate {
+			public HomeScreen Home {get; set;}
+
+			public override void RowSelected (UITableView tableView, NSIndexPath indexPath)
+			{
+				Home.ShowTaskDetails (Home.Tasks [indexPath.Row]);
+			}
 		}
 			
 		protected void ShowTaskDetails (Task task)
@@ -52,7 +80,7 @@ namespace Tasky.Screens.iPhone {
 			var title = MonoTouch.Foundation.NSBundle.MainBundle.LocalizedString ("Task Details", "Task Details");
 			context = new LocalizableBindingContext (this, taskDialog, title);
 			detailsScreen = new DialogViewController (context.Root, true);
-			ActivateController(detailsScreen);
+			this.NavigationController.PushViewController(detailsScreen, true);
 		}
 
 		public void GoToScan() {
@@ -84,35 +112,47 @@ namespace Tasky.Screens.iPhone {
 			base.ViewWillAppear (animated);
 			PopulateTable ();
 		}
-		
+
 		protected void PopulateTable ()
 		{
-			tasks = TaskManager.GetTasks ().ToList ();
-			var newTaskDefaultName = MonoTouch.Foundation.NSBundle.MainBundle.LocalizedString ("<new task>", "<new task>");
-			// make into a list of MT.D elements to display
-			List<Element> le = new List<Element>();
-			foreach (var t in tasks) {
-				le.Add (new CheckboxElement((t.Name == "" ? newTaskDefaultName:t.Name + " " + t.Notes ), t.Done));
-			}
-			var s = new Section ();
-			s.AddAll (le);
-			Root = new RootElement ("Tasky") { s }; 
-		}
-
-		public override void Selected (MonoTouch.Foundation.NSIndexPath indexPath)
-		{
-			var task = tasks[indexPath.Row];
-			ShowTaskDetails(task);
-		}
-
-		public override Source CreateSizingSource (bool unevenRows)
-		{
-			return new EditingSource (this);
+			Tasks = TaskManager.GetTasks ().ToList ();
+			TableSource.Data = Tasks;
+			this.TableView.ReloadData ();
 		}
 
 		public void DeleteTaskRow(int rowId)
 		{
-			TaskManager.DeleteTask(tasks[rowId].ID);
+			TaskManager.DeleteTask(Tasks[rowId].ID);
+		}
+
+		public class WeatherDataSource : UITableViewDataSource {
+			protected const string cellID = "WeatherCell";
+
+			public List<Task> Data {get; set;}
+
+			public override UITableViewCell GetCell (UITableView tableView, MonoTouch.Foundation.NSIndexPath indexPath)
+			{
+				UITableViewCell cell = tableView.DequeueReusableCell (cellID);
+				if (cell == null) {
+					cell = new UITableViewCell (UITableViewCellStyle.Subtitle, cellID);
+				}
+				cell.TextLabel.Text = Data [indexPath.Row].Name;
+				cell.DetailTextLabel.Text = Data [indexPath.Row].Notes;
+				cell.Accessory = Data [indexPath.Row].Done ? UITableViewCellAccessory.Checkmark : UITableViewCellAccessory.None;
+
+				return cell;
+			}
+
+			public override int RowsInSection (UITableView tableView, int section)
+			{
+				return Data.Count == 0 ? 0 : Data.Count - 1;
+			}
+
+			public override int NumberOfSections (UITableView tableView)
+			{
+				return 1;
+			}
+				
 		}
 	}
 }

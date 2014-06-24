@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MonoTouch.Foundation;
 using MonoTouch.UIKit;
+using Tasky.Screens.iPhone;
 
 namespace Tasky {
 	[Register ("AppDelegate")]
@@ -17,13 +18,13 @@ namespace Tasky {
 			window = new UIWindow (UIScreen.MainScreen.Bounds);
 			window.MakeKeyAndVisible ();
 
-			navController = new UINavigationController ();
 
 			if (UIDevice.CurrentDevice.UserInterfaceIdiom == UIUserInterfaceIdiom.Phone) {
-				homeViewController = new Tasky.Screens.iPhone.HomeScreen();
+				homeViewController = new HomeScreen();
 			} else {
-				homeViewController = new Tasky.Screens.iPhone.HomeScreen(); // TODO: replace with iPad screen if we implement for iPad
+				homeViewController = new HomeScreen(); // TODO: replace with iPad screen if we implement for iPad
 			}
+			navController = new UINavigationController (homeViewController);
 
 			UINavigationBar.Appearance.TintColor = UIColor.FromRGB (38, 117 ,255); // nice blue
 			UITextAttributes ta = new UITextAttributes();
@@ -32,7 +33,7 @@ namespace Tasky {
 			ta.Font = UIFont.FromName ("AmericanTypewriter", 0f);
 			UIBarButtonItem.Appearance.SetTitleTextAttributes(ta, UIControlState.Normal);	
 
-			navController.PushViewController(homeViewController, false);
+			//navController.PushViewController(homeViewController, false);
 			window.RootViewController = navController;
 			window.MakeKeyAndVisible ();
 			
